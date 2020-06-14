@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Don't be evil</title>
+    <title>Activity Pairing Generator</title>
     <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
     <script type="application/javascript"
             src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
@@ -147,11 +147,11 @@
             let pars = this.gen_pairings();
             return (
                 <div className="container">
-                    <h1 className="text-center mt-4 mb-0">Round Robin Pairing Generator</h1>
+                    <h1 className="text-center mt-4 mb-0">Activity Pairing Generator</h1>
                     <div className={"d-flex justify-content-center"}>
                         <div className="m-4">
                             <h2>Enter number of Participants</h2>
-                            <input class='form-control' type="number" value={this.state.count}
+                            <input className='form-control' type="number" value={this.state.count}
                                    onChange={(e) => this.setState({count: parseInt(e.target.value)})}/>
                         </div>
                         <div className="m-4">
