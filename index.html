@@ -53,7 +53,7 @@
             let len = this.props.pairing[1].length
             console.debug(this.props, "PAIRING", len)
             let top = <tr>{this.props.pairing[1].slice(0, len/2 ).map((item) => <td>{item}</td>)}</tr>
-            let bottom = <tr>{this.props.pairing[1].slice(len/2, len ).map((item) => <td>{item}</td>)}</tr>
+            let bottom = <tr>{this.props.pairing[1].slice(0).reverse().slice(0, len/2 ).map((item) => <td>{item}</td>)}</tr>
             if (this.props.pairing[0] % 2 == 0) {
                 let tmp = top;
                 top = bottom;
