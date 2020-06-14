@@ -10,6 +10,8 @@
     <script type="application/javascript"
             src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
     <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+    <script src="https://cdn.rawgit.com/abdennour/react-csv/6424b500/cdn/react-csv-latest.min.js"
+            type="text/javascript"></script>
 
     <!-- Maybe you want to use bootstrap to make it pretty? -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -52,13 +54,8 @@
         render() {
             let len = this.props.pairing[1].length
             console.debug(this.props, "PAIRING", len)
-            let top = <tr>{this.props.pairing[1].slice(0, len/2 ).map((item) => <td>{item}</td>)}</tr>
-            let bottom = <tr>{this.props.pairing[1].slice(0).reverse().slice(0, len/2 ).map((item) => <td>{item}</td>)}</tr>
-            if (this.props.pairing[0] % 2 == 0) {
-                let tmp = top;
-                top = bottom;
-                bottom = tmp;
-            }
+            let top = <tr>{this.props.pairing[1].slice(0, len / 2).map((item) => <td>{item}</td>)}</tr>
+            let bottom = <tr>{this.props.pairing[1].slice(len / 2,len).map((item) => <td>{item}</td>)}</tr>
             return (
                 <table>
                     <thead>
@@ -67,6 +64,7 @@
                     <tbody>
                     {top}
                     {bottom}
+
                     </tbody>
                 </table>
             )
@@ -118,7 +116,7 @@
             let i = 0
             while (i < this.state.rounds) {
                 if (i != 0) {
-                    let pop_indx = (i/(n-1))%n
+                    let pop_indx = (i / (n - 1)) % n
                     pairings[i] = [i, pairings[i - 1][1].slice(0)]
                     let pop = pairings[i][1].splice(pop_indx, 1)
                     pairings[i][1] = this.arrayRotate(pairings[i][1])
@@ -137,6 +135,13 @@
                 }
 
                 i += 1;
+            }
+            i = 0
+            while (i < this.state.rounds) {
+                let top = pairings[i][1].slice(0,n/2)
+                let bottom = pairings[i][1].slice(n/2,n).slice(0)
+                pairings[i][1] = top.concat(bottom)
+                i+=2
             }
             console.debug("N: ", n)
             console.debug(pairings)
