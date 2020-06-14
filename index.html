@@ -55,7 +55,7 @@
             let len = this.props.pairing[1].length
             console.debug(this.props, "PAIRING", len)
             let top = <tr>{this.props.pairing[1].slice(0, len / 2).map((item) => <td>{item}</td>)}</tr>
-            let bottom = <tr>{this.props.pairing[1].slice(len / 2,len).map((item) => <td>{item}</td>)}</tr>
+            let bottom = <tr>{this.props.pairing[1].slice(len / 2, len).map((item) => <td>{item}</td>)}</tr>
             return (
                 <table>
                     <thead>
@@ -75,14 +75,42 @@
     class Pairings extends React.Component {
         constructor(props) {
             super(props);
+
+        }
+
+        gen_pairings_csv() {
+            console.debug("CSV");
+            let pairings = this.props.pairings
+            console.debug("Pairings",pairings)
+            if (pairings == undefined || pairings == [] || pairings.length ==0) {
+                return [];
+            }
+            let data = [];
+            let n = this.props.pairings[0][1].length
+            for (let i = 0; i < pairings.length; i++) {
+                data[i * 3] = pairings[i][1].slice(0, n / 2);
+                data[i * 3 + 1] = pairings[i][1].slice(n / 2, n);
+                data[i * 3 + 2] = [];
+            }
+            console.debug("CSV data",data,n)
+            return data
         }
 
         render() {
+            const {CSVDownload, CSVLink} = ReactCSV;
             console.debug("Pairings render");
-            if (this.props.pairings != undefined) {
+            if (this.props.pairings != undefined && this.props.pairings.length > 0) {
                 return (
-                    <div className="d-flex justify-content-center flex-wrap">
-                        {this.props.pairings.map((p) => <Pairing pairing={p}/>)}
+                    <div className="w-100">
+                        <div className="d-flex justify-content-center flex-wrap">
+                            {this.props.pairings.map((p) => <Pairing pairing={p}/>)}
+                            <hr/>
+                        </div>
+                        <div className="d-flex justify-content-center">
+                            <CSVLink data={this.gen_pairings_csv()}>
+                                Download me
+                            </CSVLink>
+                        </div>
                     </div>
                 )
             } else {
@@ -107,8 +135,8 @@
         }
 
         gen_pairings() {
-            if (this.state.count == 0 || this.state.rounds == 0) {
-                return
+            if (this.state.count == 0 || this.state.rounds == 0 || this.state.rounds == undefined || this.state.count == undefined) {
+                return undefined
             }
             let n = (this.state.count % 2 == 0) ? this.state.count : this.state.count + 1
 
@@ -121,6 +149,7 @@
                     let pop = pairings[i][1].splice(pop_indx, 1)
                     pairings[i][1] = this.arrayRotate(pairings[i][1])
                     pairings[i][1].splice(pop_indx, 0, pop)
+                    pairings[i][1] = pairings[i][1].flat(3);
                 } else {
                     let arr = []
                     let j = 0
@@ -138,10 +167,17 @@
             }
             i = 0
             while (i < this.state.rounds) {
-                let top = pairings[i][1].slice(0,n/2)
-                let bottom = pairings[i][1].slice(n/2,n).slice(0)
+                let top = pairings[i][1].slice(0, n / 2)
+                let bottom = pairings[i][1].slice(n / 2, n).slice(0).reverse()
                 pairings[i][1] = top.concat(bottom)
-                i+=2
+                i += 1;
+            }
+            i = 0;
+            while (i < this.state.rounds) {
+                let top = pairings[i][1].slice(0, n / 2)
+                let bottom = pairings[i][1].slice(n / 2, n)
+                pairings[i][1] = bottom.concat(top)
+                i += 2;
             }
             console.debug("N: ", n)
             console.debug(pairings)
