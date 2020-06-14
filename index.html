@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Don't be evil</title>
+    <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
+    <script type="application/javascript"
+            src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
+    <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+
+    <!-- Maybe you want to use bootstrap to make it pretty? -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+
+<style>
+    td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    table {
+        margin: 20px
+    }
+
+</style>
+<body>
+<div id="root"></div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+<script type="text/babel">
+    const rootElement = document.getElementById('root')
+
+    class Pairing extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            let len = this.props.pairing[1].length
+            console.debug(this.props, "PAIRING", len)
+            let top = <tr>{this.props.pairing[1].slice(0, len/2 ).map((item) => <td>{item}</td>)}</tr>
+            let bottom = <tr>{this.props.pairing[1].slice(len/2, len ).map((item) => <td>{item}</td>)}</tr>
+            if (this.props.pairing[0] % 2 == 0) {
+                let tmp = top;
+                top = bottom;
+                bottom = tmp;
+            }
+            return (
+                <table>
+                    <thead>
+                    <th colSpan={this.props.pairing[1].length}>Round {this.props.pairing[0] + 1}</th>
+                    </thead>
+                    <tbody>
+                    {top}
+                    {bottom}
+                    </tbody>
+                </table>
+            )
+        }
+    }
+
+
+    class Pairings extends React.Component {
+        constructor(props) {
+            super(props);
+        }
+
+        render() {
+            console.debug("Pairings render");
+            if (this.props.pairings != undefined) {
+                return (
+                    <div className="d-flex justify-content-center flex-wrap">
+                        {this.props.pairings.map((p) => <Pairing pairing={p}/>)}
+                    </div>
+                )
+            } else {
+                return (<div className="text-center">Enter a non 0 number in both fields, B = BYE</div>)
+            }
+
+        }
+    }
+
+
+    class PairingApp extends React.Component {
+        constructor() {
+            super();
+            this.state = {count: 0, rounds: 0, pairings: []}
+
+        }
+
+        arrayRotate(arr, reverse) {
+            if (reverse) arr.unshift(arr.pop());
+            else arr.push(arr.shift());
+            return arr;
+        }
+
+        gen_pairings() {
+            if (this.state.count == 0 || this.state.rounds == 0) {
+                return
+            }
+            let n = (this.state.count % 2 == 0) ? this.state.count : this.state.count + 1
+
+            let pairings = [];
+            let i = 0
+            while (i < this.state.rounds) {
+                if (i != 0) {
+                    let pop_indx = (i/(n-1))%n
+                    pairings[i] = [i, pairings[i - 1][1].slice(0)]
+                    let pop = pairings[i][1].splice(pop_indx, 1)
+                    pairings[i][1] = this.arrayRotate(pairings[i][1])
+                    pairings[i][1].splice(pop_indx, 0, pop)
+                } else {
+                    let arr = []
+                    let j = 0
+                    while (j < n) {
+                        arr[j] = j + 1
+                        j += 1
+                    }
+                    pairings[0] = [i, arr]
+                    if (this.state.count != n) {
+                        pairings[0][1][this.state.count] = "B"
+                    }
+                }
+
+                i += 1;
+            }
+            console.debug("N: ", n)
+            console.debug(pairings)
+            return pairings
+        }
+
+        render() {
+            let pars = this.gen_pairings();
+            return (
+                <div className="container">
+                    <h1 className="text-center mt-4 mb-0">Round Robin Pairing Generator</h1>
+                    <div className={"d-flex justify-content-center"}>
+                        <div className="m-4">
+                            <h2>Enter number of Participants</h2>
+                            <input class='form-control' type="number" value={this.state.count}
+                                   onChange={(e) => this.setState({count: parseInt(e.target.value)})}/>
+                        </div>
+                        <div className="m-4">
+                            <h2>Enter number of rounds</h2>
+                            <input className='form-control' type="number" value={this.state.rounds}
+                                   onChange={(e) => this.setState({rounds: parseInt(e.target.value)})}/>
+                        </div>
+                    </div>
+                    <Pairings pairings={pars}/>
+                </div>
+            );
+        }
+    }
+
+    // Use the ReactDOM.render to show your component on the browser
+    ReactDOM.render(
+        <PairingApp/>,
+        rootElement
+    )
+
+
+</script>
+
+</body>
+
+</html>
