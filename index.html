@@ -59,7 +59,7 @@
             return (
                 <table>
                     <thead>
-                    <th colSpan={this.props.pairing[1].length}>Round {this.props.pairing[0] + 1}</th>
+                    <th colSpan={this.props.pairing[1].length}>Activity {this.props.pairing[0] + 1}</th>
                     </thead>
                     <tbody>
                     {top}
@@ -102,7 +102,7 @@
             if (this.props.pairings != undefined && this.props.pairings.length > 0) {
                 return (
                     <div className="w-100">
-                        <div className="d-flex justify-content-center flex-wrap">
+                        <div className="d-flex justify-content-start flex-wrap">
                             {this.props.pairings.map((p) => <Pairing pairing={p}/>)}
                             <hr/>
                         </div>
@@ -191,12 +191,12 @@
                     <h1 className="text-center mt-4 mb-0">Activity Pairing Generator</h1>
                     <div className={"d-flex justify-content-center"}>
                         <div className="m-4">
-                            <h2>Enter number of Participants</h2>
+                            <h2>Enter Number of Participants</h2>
                             <input className='form-control' type="number" value={this.state.count}
                                    onChange={(e) => this.setState({count: parseInt(e.target.value)})}/>
                         </div>
                         <div className="m-4">
-                            <h2>Enter number of rounds</h2>
+                            <h2>Enter Number of Activities</h2>
                             <input className='form-control' type="number" value={this.state.rounds}
                                    onChange={(e) => this.setState({rounds: parseInt(e.target.value)})}/>
                         </div>
